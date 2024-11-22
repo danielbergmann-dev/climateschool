@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import html2canvas from 'html2canvas';
@@ -37,7 +37,6 @@ function App() {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgWidth = 190;
-      const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let position = 10;
 

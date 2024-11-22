@@ -26,21 +26,25 @@ function App() {
   // Funktion zum Aktualisieren des Inputs
   const updateInput = (index, field, value) => {
     const newInputs = [...inputs];
-    newInputs[index] = { ...newInputs[index], [field]: value };
+    if (field === 'ja') {
+      newInputs[index] = { ...newInputs[index], ja: value, nein: value ? false : newInputs[index].nein };
+    } else if (field === 'nein') {
+      newInputs[index] = { ...newInputs[index], nein: value, ja: value ? false : newInputs[index].ja };
+    }
     setInputs(newInputs);
   };
 
   // Funktion zum Herunterladen als PDF
   const downloadPDF = () => {
     const input = document.getElementById('app-content');
-    html2canvas(input, { scale: 2 }).then((canvas) => {
+    html2canvas(input, { scale: 3 }).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 190;
+      const imgWidth = 210;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let position = 10;
 
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
       pdf.save('Klimaprojekt.pdf');
     });
   };
@@ -71,28 +75,53 @@ function App() {
         </div>
       </div>
       <div className="inputs-container">
-        {inputs.map((input, index) => (
-          <div key={index} className="input-box">
-            <p className="input-text">{input.text}</p>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={input.ja}
-                onChange={() => updateInput(index, 'ja', !input.ja)}
-              /> Ja
-            </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={input.nein}
-                onChange={() => updateInput(index, 'nein', !input.nein)}
-              /> Nein
-            </label>
+        <div className="inputs-columns">
+          <div className="inputs-column">
+            {inputs.slice(0, 5).map((input, index) => (
+              <div key={index} className="input-box">
+                <p className="input-text">{input.text}</p>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={input.ja}
+                    onChange={() => updateInput(index, 'ja', !input.ja)}
+                  /> Ja
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={input.nein}
+                    onChange={() => updateInput(index, 'nein', !input.nein)}
+                  /> Nein
+                </label>
+              </div>
+            ))}
           </div>
-        ))}
+          <div className="inputs-column">
+            {inputs.slice(5).map((input, index) => (
+              <div key={index + 5} className="input-box">
+                <p className="input-text">{input.text}</p>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={input.ja}
+                    onChange={() => updateInput(index + 5, 'ja', !input.ja)}
+                  /> Ja
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={input.nein}
+                    onChange={() => updateInput(index + 5, 'nein', !input.nein)}
+                  /> Nein
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
       <div className="chart-container">
-        <Pie data={chartData} />
+        <Pie data={chartData} options={{ maintainAspectRatio: false }} />
       </div>
     </div>
   );
